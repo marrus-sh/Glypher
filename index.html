@@ -1,6 +1,6 @@
 <!dOcTyPe HTML>
 <HTML Lang=en>
-<TITLE>Kijch Demo</TITLE>
+<TITLE>Glypher</TITLE>
 <META Charset=utf-8>
 <STYLE>
 BODY {
@@ -53,8 +53,10 @@ TD[Data-Active="1"] { Background: Black }
 		<BUTTON Id=generate.12x12>12x12</BUTTON>
 		<BUTTON Id=generate.8x16>8x16</BUTTON>
 		<BUTTON Id=generate.16x16>16x16</BUTTON>
-		<BUTTON Id=generate.32x64>32x64</BUTTON>
-		<BUTTON Id=generate.64x64>64x64</BUTTON>
+		<BUTTON Id=generate.12x24>12x24</BUTTON>
+		<BUTTON Id=generate.24x24>24x24</BUTTON>
+		<BUTTON Id=generate.16x32>16x32</BUTTON>
+		<BUTTON Id=generate.32x32>32x32</BUTTON>
 </DIV>
 <TABLE Id=area></TABLE>
 <SAMP Id=result><NOSCRIPT>JavaScript is required to use this webpage!</NOSCRIPT></SAMP>
@@ -82,8 +84,10 @@ document.getElementById("generate.settings").addEventListener("click", generateF
 	, ["generate.12x12", 12, true]
 	, ["generate.8x16", 16, false]
 	, ["generate.16x16", 16, true]
-	, ["generate.32x64", 64, false]
-	, ["generate.64x64", 64, true] ].forEach(( [ id, width, fullwidth ] ) => document.getElementById(id).addEventListener("click", generate.bind(null, width, fullwidth)))
+	, ["generate.12x24", 24, false]
+	, ["generate.24x24", 24, true]
+	, ["generate.16x32", 32, false]
+	, ["generate.32x32", 32, true] ].forEach(( [ id, width, fullwidth ] ) => document.getElementById(id).addEventListener("click", generate.bind(null, width, fullwidth)))
 AREA.addEventListener("mousedown", ( ( { buttons, target } ) => target.tagName == "TD" && buttons & 1 ? makeActive = !+target.dataset.active : null))
 ; [ "mousedown", "mouseover" ].forEach(type => AREA.addEventListener(type, ( { buttons, target } ) => target.tagName == "TD" && buttons & 1 ? ((target.dataset.active = +makeActive), updateResult()) : null))
 generateFromSettings()
