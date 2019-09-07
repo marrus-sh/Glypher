@@ -42,7 +42,7 @@ TD[Data-Active="1"] { Background: Black }
 </STYLE>
 <DIV Id=settings>
 	<P>
-		<LABEL>Height: <INPUT Id=scale Min=2 Value=4 Placeholder="> 1"> × 4 = <B Id=height>16</B></LABEL>
+		<LABEL>Height: <INPUT Id=scale Type=number Min=2 Value=4 Placeholder="> 1"> × 4 = <B Id=height>16</B></LABEL>
 	<P>
 		<LABEL><INPUT Id=halfwidth Type=Radio Name=fullwidth Value=0> Halfwidth</LABEL>
 		<LABEL><INPUT Id=fullwidth Type=Radio Name=fullwidth Value=1 Checked> Fullwidth</LABEL>
@@ -73,9 +73,9 @@ const
 			for ( i = 0 ; i < +height / (+fullwidth ? 1 : 2) ; i++ ) r.insertCell().dataset.active = 0 }
 		updateResult() }
 	, generateFromSettings = ( ) => generate(document.getElementById("height").textContent, document.getElementById("fullwidth").checked)
-	, updateHeight = ( ) => document.getElementById("height").textContent = 4 * document.getElementById("scale").value
+	, updateHeight = ( ) => Math.max(document.getElementById("height").textContent = 4 * document.getElementById("scale").value, 8)
 	, updateResult = ( ) => document.getElementById("result").textContent = Array.prototype.reduce.call(AREA.querySelectorAll("TD"), (digits, datum, index) => index % 4 == 0 ? (digits.push(+datum.dataset.active << 3), digits) : ((digits[digits.length - 1] |= +datum.dataset.active << (3 - index % 4)), digits), [ ]).map(n => n.toString(0x10).toUpperCase()).join("")
-document.getElementById("scale").addEventListener("change", updateHeight)
+document.getElementById("scale").addEventListener("input", updateHeight)
 document.getElementById("generate.settings").addEventListener("click", generateFromSettings)
 ; [
 	["generate.6x12", 12, false]
