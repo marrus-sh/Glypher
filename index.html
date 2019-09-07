@@ -1,0 +1,92 @@
+<!dOcTyPe HTML>
+<HTML Lang=en>
+<TITLE>Kijch Demo</TITLE>
+<META Charset=utf-8>
+<STYLE>
+BODY {
+	Background: Black;
+	Color: White;
+	Text-Align: Center;
+}
+SAMP {
+	Display: Block;
+	Margin: 1EM Auto;
+	Max-Width: 32EM;
+	Word-Break: Break-All;
+}
+TABLE {
+	Margin: Auto;
+	User-Select: None;
+}
+TD {
+	Box-Sizing: Border-Box;
+	Border: Thin DimGrey Solid;
+	Padding: 0;
+	Width: 1EM;
+	Height: 1EM;
+}
+TD[Data-Active="0"] { Background: White }
+TD[Data-Active="1"] { Background: Black }
+#settings {
+	Margin: 1EM Auto;
+	Border: Grey Ridge;
+	Max-Width: 42EM;
+}
+#settings P {
+	Display: Flex;
+	Flex-Flow: Row Wrap;
+	Justify-Content: Center;
+}
+#settings LABEL,
+#settings BUTTON { Margin: 0 1EM }
+</STYLE>
+<DIV Id=settings>
+	<P>
+		<LABEL>Height: <INPUT Id=scale Min=2 Value=4 Placeholder="> 1"> × 4 = <B Id=height>16</B></LABEL>
+	<P>
+		<LABEL><INPUT Id=halfwidth Type=Radio Name=fullwidth Value=0> Halfwidth</LABEL>
+		<LABEL><INPUT Id=fullwidth Type=Radio Name=fullwidth Value=1 Checked> Fullwidth</LABEL>
+	<P>
+		<BUTTON Id=generate.settings>Generate from above settings</BUTTON>
+	<P>
+		<BUTTON Id=generate.6x12>6x12</BUTTON>
+		<BUTTON Id=generate.12x12>12x12</BUTTON>
+		<BUTTON Id=generate.8x16>8x16</BUTTON>
+		<BUTTON Id=generate.16x16>16x16</BUTTON>
+		<BUTTON Id=generate.32x64>32x64</BUTTON>
+		<BUTTON Id=generate.64x64>64x64</BUTTON>
+</DIV>
+<TABLE Id=area></TABLE>
+<SAMP Id=result><NOSCRIPT>JavaScript is required to use this webpage!</NOSCRIPT></SAMP>
+<SCRIPT Type=module>
+let makeActive = true
+const
+	AREA = document.getElementById("area")
+	, generate = ( height, fullwidth ) => {
+		let
+			i = 0
+			, j = 0
+			, r = void { }
+		AREA.textContent = ""
+		for ( ; j < +height ; j++ ) {
+			r = AREA.insertRow()
+			for ( i = 0 ; i < +height / (+fullwidth ? 1 : 2) ; i++ ) r.insertCell().dataset.active = 0 }
+		updateResult() }
+	, generateFromSettings = ( ) => generate(document.getElementById("height").textContent, document.getElementById("fullwidth").checked)
+	, updateHeight = ( ) => document.getElementById("height").textContent = 4 * document.getElementById("scale").value
+	, updateResult = ( ) => document.getElementById("result").textContent = Array.prototype.reduce.call(AREA.querySelectorAll("TD"), (digits, datum, index) => index % 4 == 0 ? (digits.push(+datum.dataset.active << 3), digits) : ((digits[digits.length - 1] |= +datum.dataset.active << (3 - index % 4)), digits), [ ]).map(n => n.toString(0x10).toUpperCase()).join("")
+document.getElementById("scale").addEventListener("change", updateHeight)
+document.getElementById("generate.settings").addEventListener("click", generateFromSettings)
+; [
+	["generate.6x12", 12, false]
+	, ["generate.12x12", 12, true]
+	, ["generate.8x16", 16, false]
+	, ["generate.16x16", 16, true]
+	, ["generate.32x64", 64, false]
+	, ["generate.64x64", 64, true] ].forEach(( [ id, width, fullwidth ] ) => document.getElementById(id).addEventListener("click", generate.bind(null, width, fullwidth)))
+AREA.addEventListener("mousedown", ( ( { buttons, target } ) => target.tagName == "TD" && buttons & 1 ? makeActive = !+target.dataset.active : null))
+; [ "mousedown", "mouseover" ].forEach(type => AREA.addEventListener(type, ( { buttons, target } ) => target.tagName == "TD" && buttons & 1 ? ((target.dataset.active = +makeActive), updateResult()) : null))
+generateFromSettings()
+updateHeight()
+updateResult()
+</SCRIPT>
