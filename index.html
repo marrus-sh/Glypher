@@ -60,6 +60,7 @@ TD[Data-Active="1"] { Background: Black }
 </DIV>
 <TABLE Id=area></TABLE>
 <SAMP Id=result><NOSCRIPT>JavaScript is required to use this webpage!</NOSCRIPT></SAMP>
+<BUTTON Id=remember>Add to history</BUTTON>
 <SCRIPT Type=module>
 let makeActive = true
 const
@@ -106,4 +107,5 @@ updateHeight()
 updateHash()
 updateResult()
 window.addEventListener("hashchange", updateHash)
+document.getElementById("remember").addEventListener("click", ( ) => history.pushState(null, "", location.href))
 </SCRIPT>
