@@ -76,7 +76,7 @@ const
 		updateResult() }
 	, generateFromSettings = ( ) => generate(document.getElementById("height").textContent, document.getElementById("fullwidth").checked)
 	, updateHeight = ( ) => Math.max(document.getElementById("height").textContent = 4 * document.getElementById("scale").value, 8)
-	, updateResult = ( ) => document.getElementById("result").textContent = Array.prototype.reduce.call(AREA.querySelectorAll("TD"), (digits, datum, index) => index % 4 == 0 ? (digits.push(+datum.dataset.active << 3), digits) : ((digits[digits.length - 1] |= +datum.dataset.active << (3 - index % 4)), digits), [ ]).map(n => n.toString(0x10).toUpperCase()).join("")
+	, updateResult = ( ) => history.replaceState(null, "", `#${ document.getElementById("result").textContent = Array.prototype.reduce.call(AREA.querySelectorAll("TD"), (digits, datum, index) => index % 4 == 0 ? (digits.push(+datum.dataset.active << 3), digits) : ((digits[digits.length - 1] |= +datum.dataset.active << (3 - index % 4)), digits), [ ]).map(n => n.toString(0x10).toUpperCase()).join("") }`)
 document.getElementById("scale").addEventListener("input", updateHeight)
 document.getElementById("generate.settings").addEventListener("click", generateFromSettings)
 ; [
@@ -90,7 +90,17 @@ document.getElementById("generate.settings").addEventListener("click", generateF
 	, ["generate.32x32", 32, true] ].forEach(( [ id, width, fullwidth ] ) => document.getElementById(id).addEventListener("click", generate.bind(null, width, fullwidth)))
 AREA.addEventListener("mousedown", ( ( { buttons, target } ) => target.tagName == "TD" && buttons & 1 ? makeActive = !+target.dataset.active : null))
 ; [ "mousedown", "mouseover" ].forEach(type => AREA.addEventListener(type, ( { buttons, target } ) => target.tagName == "TD" && buttons & 1 ? ((target.dataset.active = +makeActive), updateResult()) : null))
-generateFromSettings()
 updateHeight()
+location.hash && location.hash.length > 9 && /^#(?:[0-9A-Fa-f]{2})+/u.test(location.hash) && (( data ) => {
+	let
+		i = 0
+		, sqrt = Math.floor(Math.sqrt(data.length * 4))
+	const fullwidth = sqrt * sqrt == data.length * 4
+	if ( !fullwidth ) {
+		sqrt = Math.floor(Math.sqrt(data.length * 8))
+		if ( !(sqrt * sqrt == data.length * 8) ) return }
+	generate(sqrt, fullwidth)
+	Array.prototype.forEach.call(AREA.querySelectorAll("TD"), ( cell, i ) => cell.dataset.active = +!!(parseInt(data[Math.floor(i / 4)], 0x10) & 0b1000 >> i % 4))
+	return true })( location.hash.substring(1) ) || generateFromSettings()
 updateResult()
 </SCRIPT>
